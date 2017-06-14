@@ -14,7 +14,15 @@ def main():
     """This function sould call noisy_packet() to get a Gaussian wave
     packet, call clean_data() to apply a low pass filter to the data and
     finally plot the result."""
-    #TODO add your code here
+   
+    x_vals= np.arange(0, 4*np.pi)
+    packet = noisy_packet(x_vals, 5,1,0.2)
+    packet_plot= plt.figure()
+    plt.plot(x_vals, packet)
+    plt.savefig("noisy_packet.png")
+    clean_data(x_vals, packet)
+
+
 
 
 def noisy_packet(x_values, k, sigma, noise_amplitude):
@@ -30,7 +38,34 @@ def clean_data(x_values,y_values):
     transform on it, filter out the high frequency noise, transform the
     signal back into real space, and return it."""
 
-    pass #TODO add your code here
-    #return y_clean
+    clean_plot= plt.figure()
+    
+    Fourier_transform= np.fft.rfft(y_values)
+    print(Fourier_transform)
+   
+
+    freq= np.fft.fftfreq(len(Fourier_transform))
+    print(freq)
+    filter_fourier = [filter_with_freq(x,f) for x, f in zip(Fourier_transform,freq)]
+    new_y = np.fft.irfft(filter_fourier, len(y_values))
+
+
+    plt.plot(x_values, y_values)
+    """plt.plot(x_values, [x+1 for x in new])"""
+    plt.plot(x_values, new_y)
+
+    plt.savefig("clean_plot.png")
+    plt.show()
+
+
+
+def filter_with_freq(fourier, freq):
+    amp = 0.2 ##noise amplitude
+    if abs(freq)>amp:
+        return 0
+    else:
+        return fourier
+
+
 
 main()  # calls your main function
